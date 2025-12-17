@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="or">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DEBASISH IQ TESTER PRO</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            text-align: center;
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        #game-ui, #loading-screen { display: none; }
+
+        .container { padding: 25px; }
+
+        h1 { color: #ffcc00; font-size: 2.2rem; text-shadow: 0 0 10px #ffcc00; }
+        
+        input {
+            padding: 18px;
+            font-size: 1.2rem;
+            border-radius: 15px;
+            border: 2px solid #ffcc00;
+            width: 85%;
+            background: #161b22;
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .action-btn {
+            padding: 15px 45px;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+        }
+
+        .loader-box {
+            width: 85%;
+            height: 25px;
+            background: #21262d;
+            border-radius: 20px;
+            margin: 20px auto;
+        }
+        .loader-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ffcc00, #ff8800);
+            border-radius: 20px;
+            transition: 0.2s;
+        }
+
+        .game-box {
+            position: relative;
+            height: 50vh;
+            width: 90%;
+            margin: 15px auto;
+            border: 3px dashed #444;
+            background: #161b22;
+            border-radius: 20px;
+        }
+
+        #runBtn {
+            position: absolute;
+            top: 50%;
+            left: 25%;
+            padding: 15px 40px;
+            background: #ff3e3e;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            touch-action: none;
+            box-shadow: 0 0 20px rgba(255, 62, 62, 0.5);
+        }
+
+        #insult-display {
+            font-size: 1.1rem;
+            color: #00ffcc;
+            height: 30px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="setup-screen" class="container">
+        <h1>IQ ସ୍କାନର୍ v2.0</h1>
+        <p>Debasish Sia's ସ୍ପେଶାଲ ସର୍ଭର</p>
+        <input type="text" id="userName" placeholder="ତୁମ ନାମ ଲେଖ...">
+        <br>
+        <button class="action-btn" onclick="startLoading()">ସ୍କାନିଂ ଆରମ୍ଭ କର</button>
+    </div>
+
+    <div id="loading-screen" class="container">
+        <h1 id="loadStatus">ଚେକ୍ ଚାଲିଛି...</h1>
+        <div class="loader-box">
+            <div id="pBar" class="loader-fill"></div>
+        </div>
+        <p id="msg">ସାଙ୍ଗର IQ ମପା ହେଉଛି...</p>
+    </div>
+
+    <div id="game-ui" class="container">
+        <h2 id="greet"></h2>
+        <div id="insult-display">ରିପୋର୍ଟ: ଆପଣ ଏକ ଗଧ! 🫏</div>
+        <p>ମିଛ ବୋଲି ପ୍ରମାଣ କରିବା ପାଇଁ <b>'ନା'</b> ଧର:</p>
+        
+        <div class="game-box" id="box">
+            <button id="runBtn">ନା (NO)</button>
+        </div>
+    </div>
+
+    <p style="font-size:0.8rem; color:#666;">POWERED BY DEBASISH SIA</p>
+
+    <script>
+        let fName = "";
+        let count = 0;
+        const funnyLines = [
+            "ଆରେ ଧରି ପାରୁନୁ କି? 😂",
+            "ଆଉ ଟିକେ ଚେଷ୍ଟା କର! 🤣",
+            "ତୁମ ଦ୍ଵାରା ହବନି ରେ ପୁଅ!",
+            "ଖାଲି କଣ ଭାତ ଖାଉଛ? ବୁଦ୍ଧି ନାହିଁ?",
+            "Debasish ଠାରୁ ଟ୍ୟୁସନ ନେଇଯା!",
+            "ଏଇଟା ଗେମ୍, ତୁମ ମୁଣ୍ଡ ନୁହେଁ!",
+            "ସାବାସ! ଆଉ ଟିକେ ପାଖକୁ ଆସ!",
+            "ହାତ ଚଳୁନି ନା ବୁଦ୍ଧି ପାଉନି? 🤡"
+        ];
+
+        function startLoading() {
+            fName = document.getElementById('userName').value;
+            if (!fName) { alert("ନାମ ତ ଲେଖ!"); return; }
+
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('loading-screen').style.display = 'block';
+
+            let bar = document.getElementById('pBar');
+            let msg = document.getElementById('msg');
+            let w = 0;
+
+            let timer = setInterval(() => {
+                w += 2;
+                bar.style.width = w + "%";
+                if(w == 20) msg.innerText = "ତୁମ ଫଟୋ ସ୍କାନ ହେଉଛି...";
+                if(w == 50) msg.innerText = "ଗଧ ସାଙ୍ଗରେ ମ୍ୟାଚ୍ କରାଯାଉଛି...";
+                if(w == 80) msg.innerText = "Match Successful! 100%";
+                
+                if (w >= 100) {
+                    clearInterval(timer);
+                    showGame();
+                }
+            }, 50);
+        }
+
+        function showGame() {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('game-ui').style.display = 'block';
+            document.getElementById('greet').innerText = "ଓହୋ " + fName + " ଭାଇ!";
+        }
+
+        const btn = document.getElementById('runBtn');
+        const box = document.getElementById('box');
+        const insultText = document.getElementById('insult-display');
+
+        function move(e) {
+            e.preventDefault();
+            const maxX = box.clientWidth - btn.clientWidth;
+            const maxY = box.clientHeight - btn.clientHeight;
+
+            btn.style.left = Math.random() * maxX + 'px';
+            btn.style.top = Math.random() * maxY + 'px';
+            
+            count++;
+            
+            // Change text message randomly every time button moves
+            let randomLine = funnyLines[Math.floor(Math.random() * funnyLines.length)];
+            insultText.innerText = randomLine;
+
+            // Specific milestones
+            if(count == 10) alert("କଣ ହେଲା " + fName + "? ହାଲିଆ ହେଇଗଲଣି କି?");
+            if(count == 20) alert("ମାନିଯାଅ ରେ! Debasish ହିଁ ରଜା, ତୁମେ ଖାଲି ପ୍ରଜା! 👑");
+        }
+
+        btn.addEventListener('touchstart', move);
+        btn.addEventListener('click', move);
+    </script>
+</body>
+</html>
